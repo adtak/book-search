@@ -6,6 +6,8 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+requests = "^2.27.1"
+fire = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.1"
@@ -19,4 +21,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
 profile = "black"
-src_path = ["src"]
+src_paths = ["src"]
