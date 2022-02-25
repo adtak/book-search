@@ -8,7 +8,7 @@ import requests
 API_URL = "https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404"
 
 
-def get_books(keyword: str, file_name: str = "books.json"):
+def main(keyword: str, file_name: str = "books.json"):
     payload = {
         "format": "json",
         "applicationId": os.environ["RAKUTEN_APP_ID"],
@@ -26,8 +26,8 @@ def get_books(keyword: str, file_name: str = "books.json"):
         payload["page"] = data["page"] + 1
         time.sleep(1)
     with open(file_name, "w") as f:
-        json.dump(books, f)
+        json.dump(keyword + "_" + books, f)
 
 
 if __name__ == "__main__":
-    fire.Fire(get_books)
+    fire.Fire(main)
