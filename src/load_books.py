@@ -1,19 +1,19 @@
 import json
-import os
 
 import fire
-from elasticsearch import Elasticsearch
 from tqdm import tqdm
+
+from es import ESClient
 
 
 def main(file_name: str = "books.json"):
     with open(file_name, "r") as f:
         books = json.load(f)
-    es = Elasticsearch(http_auth=("elastic", os.environ["ELASTICSEARCH_PW"]))
+    client = ESClient()
     for book in tqdm(books):
         book_item = book["Item"]
         try:
-            es.create(index="book", id=book_item["isbn"], body=book_item)
+            client.create(index="book", id=book_item["isbn"], body=book_item)
         except Exception:
             pass
 

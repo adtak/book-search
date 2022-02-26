@@ -1,8 +1,6 @@
-import os
-
 import streamlit as st
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search
+
+from es import ESClient
 
 
 def main_ui():
@@ -18,21 +16,10 @@ def side_ui():
 def main():
     st.markdown("## Book Search")
     keyword = main_ui()
-    _ = side_ui()
-    client = Elasticsearch(
-        "http://localhost:9200", http_auth=("elastic", os.environ["ELASTICSEARCH_PW"])
-    )
+    size = side_ui()
+    es_client = ESClient()
     if st.button("検索"):
-        s = Search(using=client, index="book").query(
-            "match", **{"itemCaption": keyword}
-        )
-        print(s.to_dict())
-        response = s.execute()
-        results = [
-            {"Title": i["_source"]["title"], "Score": i["_score"]}
-            for i in response.hits.hits
-        ]
-        st.dataframe(results)
+        st.dataframe(es_client.search(keyword, size))
 
 
 if __name__ == "__main__":
