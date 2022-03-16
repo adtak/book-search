@@ -1,0 +1,178 @@
+DELETE /book
+
+PUT /book/_doc/1
+{
+  "title": "test",
+  "reviews": [{
+    "name": "John",
+    "detail": "good",
+    "date": "2021-01-01"
+  }, {
+    "name": "Alice",
+    "detail": "bad",
+    "date": "2021-02-01"
+  }]
+}
+
+GET /book/_mapping
+
+GET /book/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {"match": {
+          "reviews.name": "John"
+        }},
+        {"match": {
+          "reviews.detail": "bad"
+        }},
+        {"range": {
+          "reviews.date": {
+            "gte": "2020-01-01"
+          }
+        }}
+      ]
+    }
+  }
+}
+
+DELETE /book
+
+PUT /book
+{
+  "mappings": {
+    "properties": {
+      "reviews": {
+        "type": "nested"
+      }
+    }
+  }
+}
+
+GET /book/_mapping
+
+PUT /book/_doc/1
+{
+  "title": "test",
+  "reviews": [{
+    "name": "John",
+    "detail": "good",
+    "date": "2021-01-01"
+  }, {
+    "name": "Alice",
+    "detail": "bad",
+    "date": "2021-02-01"
+  }]
+}
+
+GET /book/_mapping
+
+GET /book/_search
+{
+  "query": {
+    "nested": {
+      "path": "reviews",
+      "query": {
+        "bool": {
+          "must": [
+            {"match": {
+              "reviews.name": "John"
+            }},
+            {"match": {
+              "reviews.detail": "bad"
+            }},
+            {"range": {
+              "reviews.date": {
+                "gte": "2020-01-01"
+              }
+            }}
+          ]
+        }
+      }
+    }
+  }
+}
+
+PUT /book/_doc/2
+{
+  "title": "test",
+  "reviews": [{
+    "name": "David",
+    "detail": "good and good",
+    "date": "2021-01-01"
+  }, {
+    "name": "Mark",
+    "detail": "bad",
+    "date": "2021-02-01"
+  }]
+}
+
+GET /book/_search
+{
+  "_source": {
+    "excludes": "reviews"
+  }, 
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "title.keyword": {
+              "value": "test"
+            }
+          }
+        },
+        {
+          "nested": {
+            "path": "reviews",
+            "query": {
+              "match": {
+                "reviews.detail": "good"
+              }
+            },
+            "inner_hits": {}
+          }
+        }
+      ]
+    }
+  }
+}
+
+PUT /simple_book/_doc/1
+{
+  "title": "test",
+  "detail": "good"
+}
+
+PUT /simple_book/_doc/2
+{
+  "title": "test",
+  "detail": "bad"
+}
+
+PUT /simple_book/_doc/3
+{
+  "title": "test",
+  "detail": "good and good"
+}
+
+PUT /simple_book/_doc/4
+{
+  "title": "test",
+  "detail": "bad"
+}
+
+GET /simple_book/_search
+{
+  "query": {"match": {
+    "detail": "good"
+  }}
+}
+
+GET /simple_book/_search
+{
+    "query": {
+        "match_all": {}
+    }
+}
