@@ -1,45 +1,6 @@
-DELETE /book
+DELETE /books
 
-PUT /book/_doc/1
-{
-  "title": "test",
-  "reviews": [{
-    "name": "John",
-    "detail": "good",
-    "date": "2021-01-01"
-  }, {
-    "name": "Alice",
-    "detail": "bad",
-    "date": "2021-02-01"
-  }]
-}
-
-GET /book/_mapping
-
-GET /book/_search
-{
-  "query": {
-    "bool": {
-      "must": [
-        {"match": {
-          "reviews.name": "John"
-        }},
-        {"match": {
-          "reviews.detail": "bad"
-        }},
-        {"range": {
-          "reviews.date": {
-            "gte": "2020-01-01"
-          }
-        }}
-      ]
-    }
-  }
-}
-
-DELETE /book
-
-PUT /book
+PUT /books
 {
   "mappings": {
     "properties": {
@@ -50,11 +11,9 @@ PUT /book
   }
 }
 
-GET /book/_mapping
-
-PUT /book/_doc/1
+PUT /books/_doc/1
 {
-  "title": "test",
+  "title": "test1",
   "reviews": [{
     "name": "John",
     "detail": "good",
@@ -66,37 +25,9 @@ PUT /book/_doc/1
   }]
 }
 
-GET /book/_mapping
-
-GET /book/_search
+PUT /books/_doc/2
 {
-  "query": {
-    "nested": {
-      "path": "reviews",
-      "query": {
-        "bool": {
-          "must": [
-            {"match": {
-              "reviews.name": "John"
-            }},
-            {"match": {
-              "reviews.detail": "bad"
-            }},
-            {"range": {
-              "reviews.date": {
-                "gte": "2020-01-01"
-              }
-            }}
-          ]
-        }
-      }
-    }
-  }
-}
-
-PUT /book/_doc/2
-{
-  "title": "test",
+  "title": "test2",
   "reviews": [{
     "name": "David",
     "detail": "good and good",
@@ -108,7 +39,31 @@ PUT /book/_doc/2
   }]
 }
 
-GET /book/_search
+PUT /books/_doc/3
+{
+  "title": "test3",
+  "reviews": [{
+    "name": "Mark",
+    "detail": "good",
+    "date": "2021-01-01"
+  }, {
+    "name": "Alice",
+    "detail": "good and good",
+    "date": "2021-02-01"
+  }]
+}
+
+PUT /books/_doc/4
+{
+  "title": "test4",
+  "reviews": [{
+    "name": "David",
+    "detail": "good and bad",
+    "date": "2021-02-01"
+  }]
+}
+
+GET /books/_search
 {
   "_source": {
     "excludes": "reviews"
@@ -117,11 +72,7 @@ GET /book/_search
     "bool": {
       "must": [
         {
-          "term": {
-            "title.keyword": {
-              "value": "test"
-            }
-          }
+          "match_all": {}
         },
         {
           "nested": {
@@ -131,7 +82,8 @@ GET /book/_search
                 "reviews.detail": "good"
               }
             },
-            "inner_hits": {}
+            "inner_hits": {},
+            "score_mode": "avg"
           }
         }
       ]
@@ -139,40 +91,9 @@ GET /book/_search
   }
 }
 
-PUT /simple_book/_doc/1
+GET /books/_search
 {
-  "title": "test",
-  "detail": "good"
-}
-
-PUT /simple_book/_doc/2
-{
-  "title": "test",
-  "detail": "bad"
-}
-
-PUT /simple_book/_doc/3
-{
-  "title": "test",
-  "detail": "good and good"
-}
-
-PUT /simple_book/_doc/4
-{
-  "title": "test",
-  "detail": "bad"
-}
-
-GET /simple_book/_search
-{
-  "query": {"match": {
-    "detail": "good"
-  }}
-}
-
-GET /simple_book/_search
-{
-    "query": {
-        "match_all": {}
-    }
+  "query": {
+    "match_all": {}
+  }
 }
