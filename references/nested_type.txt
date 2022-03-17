@@ -13,7 +13,7 @@ PUT /books
 
 PUT /books/_doc/1
 {
-  "title": "test1",
+  "title": "test 1",
   "reviews": [{
     "name": "John",
     "detail": "good",
@@ -27,7 +27,7 @@ PUT /books/_doc/1
 
 PUT /books/_doc/2
 {
-  "title": "test2",
+  "title": "test 2",
   "reviews": [{
     "name": "David",
     "detail": "good and good",
@@ -41,7 +41,7 @@ PUT /books/_doc/2
 
 PUT /books/_doc/3
 {
-  "title": "test3",
+  "title": "test 3",
   "reviews": [{
     "name": "Mark",
     "detail": "good",
@@ -55,7 +55,7 @@ PUT /books/_doc/3
 
 PUT /books/_doc/4
 {
-  "title": "test4",
+  "title": "test 4",
   "reviews": [{
     "name": "David",
     "detail": "good and bad",
@@ -72,14 +72,29 @@ GET /books/_search
     "bool": {
       "must": [
         {
-          "match_all": {}
+          "match": {
+            "title": "test"
+          }
         },
         {
           "nested": {
             "path": "reviews",
             "query": {
-              "match": {
-                "reviews.detail": "good"
+              "bool": {
+                "must": [
+                  {
+                    "match": {
+                      "reviews.detail": "good"
+                    }
+                  },
+                  {
+                    "range": {
+                      "reviews.date": {
+                        "gte": "2021-01-15"
+                      }
+                    }
+                  }
+                ]
               }
             },
             "inner_hits": {},
