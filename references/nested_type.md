@@ -1,3 +1,9 @@
+# Nested type
+
+## 準備
+
+- 事前にnestedを指定しないとobjectになってしまう
+```
 DELETE /books
 
 PUT /books
@@ -10,7 +16,10 @@ PUT /books
     }
   }
 }
+```
 
+- documentをPUTする
+```
 PUT /books/_doc/1
 {
   "title": "test 1",
@@ -62,7 +71,23 @@ PUT /books/_doc/4
     "date": "2021-02-01"
   }]
 }
+```
+```
+GET /books/_search
+{
+  "query": {
+    "match_all": {}
+  }
+}
+```
 
+## 検索
+
+- excludesで結果からreviewsを取り除ける
+- nestedでreviewsを検索する。その時、pathで対象のnestedを指定する
+- inner_hitsでnestedのスコアなども返却される
+- score_modeで親にnestedのスコアをどうやって反映するか指定する
+```
 GET /books/_search
 {
   "_source": {
@@ -72,8 +97,10 @@ GET /books/_search
     "bool": {
       "must": [
         {
-          "match": {
-            "title": "test"
+          "multi_match": {
+            "query": "good",
+            "fields": ["reviews.name", "reviews.detail"],
+            "type": "best_fields"
           }
         },
         {
@@ -105,10 +132,4 @@ GET /books/_search
     }
   }
 }
-
-GET /books/_search
-{
-  "query": {
-    "match_all": {}
-  }
-}
+```
