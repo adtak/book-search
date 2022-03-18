@@ -29,6 +29,23 @@ def main():
             )
         )
     )
+    # もしくは以下の方がキレイでわかりやすいかもしれない
+    # nested_s = (
+    #     Search()
+    #     .query("match", **{"reviews.detail": "good"})
+    #     .query("range", **{"reviews.date": {"gte": "2021-01-15"}})
+    # )
+    # s = (
+    #     Search(using=client, index=index)
+    #     .query("match", **{"title": "test"})
+    #     .query(
+    #         "nested",
+    #         path="reviews",
+    #         score_mode="avg",
+    #         inner_hits={},
+    #         **nested_s.to_dict(),
+    #     )
+    # )
     pprint(s.to_dict())
     response: Response = s.execute()
     pprint(f"--- Results: {len(response.hits.hits)} ---")
