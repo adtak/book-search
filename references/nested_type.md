@@ -1,6 +1,6 @@
 # Nested type
 
-## 準備
+## Preparation
 
 - 事前にnestedを指定しないとobjectになってしまう
 ```
@@ -81,7 +81,7 @@ GET /books/_search
 }
 ```
 
-## 検索
+## Search
 
 - excludesで結果からreviewsを取り除ける
 - nestedでreviewsを検索する。その時、pathで対象のnestedを指定する
