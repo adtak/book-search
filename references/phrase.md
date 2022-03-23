@@ -1,4 +1,4 @@
-# Wildcard
+# Phrase
 
 ## PUT documents
 
@@ -11,6 +11,11 @@ PUT /memo/_doc/1
 PUT /memo/_doc/2
 {
   "description": "This bike is made of carbon."
+}
+
+PUT /memo/_doc/3
+{
+  "description": "This is a very old red car."
 }
 ```
 
@@ -70,21 +75,33 @@ GET /memo/_search
 }
 ```
 
-## Wildcard
+## Match phrase query
 
-- 「This is」は形態素解析されない。ワイルドカードをつけても「text type」に「This is 〜」というindexは存在しないのでヒットしない
+- 「text type」に対してphraseでヒットする。「keyword」では当然ヒットしない
 ```
 GET /memo/_search
 {
   "query": {
-    "wildcard": {
-      "description": {
-        "value": "This is"
-      }
+    "match_phrase": {
+      "description": "This is"
     }
   }
 }
 
+GET /memo/_search
+{
+  "query": {
+    "match_phrase": {
+      "description.keyword": "This is"
+    }
+  }
+}
+```
+
+## Wildcard query
+
+- 「This is」は形態素解析されない。ワイルドカードをつけても「text type」に「This is 〜」というindexは存在しないのでヒットしない
+```
 GET /memo/_search
 {
   "query": {
@@ -104,18 +121,59 @@ GET /memo/_search
   "query": {
     "wildcard": {
       "description.keyword": {
-        "value": "This is"
+        "value": "*This is*"
+      }
+    }
+  }
+}
+```
+
+## Simple query string
+
+- 「text type」に対してphraseでヒットする。「keyword」では当然ヒットしない
+```
+GET memo/_search
+{
+  "query": {
+    "simple_query_string": {
+      "query": "\"This is\"",
+      "fields": ["description"]
+    }
+  }
+}
+
+GET memo/_search
+{
+  "query": {
+    "simple_query_string": {
+      "query": "\"This is\"",
+      "fields": ["description.keyword"]
+    }
+  }
+}
+```
+
+## Regexp query
+
+- 「keyword type」に対して正規表現でヒットする。「text」では当然ヒットしない
+```
+GET memo/_search
+{
+  "query": {
+    "regexp": {
+      "description": {
+        "value": ".*This is.*"
       }
     }
   }
 }
 
-GET /memo/_search
+GET memo/_search
 {
   "query": {
-    "wildcard": {
+    "regexp": {
       "description.keyword": {
-        "value": "*This is*"
+        "value": ".*This is.*"
       }
     }
   }
