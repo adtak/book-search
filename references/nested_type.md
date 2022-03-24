@@ -71,6 +71,16 @@ PUT /books/_doc/4
     "date": "2021-02-01"
   }]
 }
+
+PUT /books/_doc/5
+{
+  "title": null,
+  "reviews": [{
+    "name": "Alice",
+    "detail": "good and bad",
+    "date": "2021-02-01"
+  }]
+}
 ```
 ```
 GET /books/_search
@@ -98,8 +108,8 @@ GET /books/_search
       "must": [
         {
           "multi_match": {
-            "query": "good",
-            "fields": ["reviews.name", "reviews.detail"],
+            "query": "test",
+            "fields": ["title"],
             "type": "best_fields"
           }
         },
