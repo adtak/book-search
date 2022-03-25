@@ -12,6 +12,10 @@ def main():
         http_auth=("elastic", os.environ["ELASTICSEARCH_PW"]),
     )
     _, index = "good", "books"
+    bool_must_q = (
+        Q("match", **{"reviews.detail": "good"})
+        & Q("range", **{"reviews.date": {"gte": "2021-01-15"}})
+    )
     s = (
         Search(using=client, index=index)
         .query("match", **{"title": "test"})
@@ -20,36 +24,14 @@ def main():
             path="reviews",
             score_mode="avg",
             inner_hits={},
-            query=Q(
-                "bool",
-                must=[
-                    Q("match", **{"reviews.detail": "good"}),
-                    Q("range", **{"reviews.date": {"gte": "2021-01-15"}}),
-                ]
-            )
+            query=bool_must_q,
         )
     )
-    # もしくは以下の方がキレイでわかりやすいかもしれない
-    # nested_s = (
-    #     Search()
-    #     .query("match", **{"reviews.detail": "good"})
-    #     .query("range", **{"reviews.date": {"gte": "2021-01-15"}})
-    # )
-    # s = (
-    #     Search(using=client, index=index)
-    #     .query("match", **{"title": "test"})
-    #     .query(
-    #         "nested",
-    #         path="reviews",
-    #         score_mode="avg",
-    #         inner_hits={},
-    #         **nested_s.to_dict(),
-    #     )
-    # )
+    print("--- Request ---")
     pprint(s.to_dict())
     response: Response = s.execute()
-    pprint(f"--- Results: {len(response.hits.hits)} ---")
-    pprint(response.hits.hits)
+    print(f"--- Results: {len(response.hits.hits)} ---")
+    pprint(list(response.hits.hits))
 
 
 if __name__ == "__main__":
