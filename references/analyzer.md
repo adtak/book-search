@@ -2,24 +2,7 @@
 
 ## Preparation
 
-- 予めindex設定でkuromojiを指定する
-```
-PUT books
-{
-  "settings": {
-    "analysis": {
-      "analyzer": {
-        "my_analyzer": {
-          "type": "custom",
-          "tokenizer": "kuromoji_tokenizer"
-        }
-      }
-    }
-  }
-}
-```
-
-- ユーザ辞書を登録する場合は以下のような形
+- 予めindex設定でkuromojiを指定する。ユーザ辞書とシノニムを登録する場合は以下のような形
 ```
 PUT books
 {
@@ -30,13 +13,24 @@ PUT books
           "kuromoji_user_dict": {
             "type": "kuromoji_tokenizer",
             "mode": "search",
-            "user_dictionary_rules": ["関西国際空港,関西国際 空港,カンサイコクサイ クウコウ,カスタム名詞"]
+            "user_dictionary_rules": ["関東国際空港,関東国際空港,カントウコクサイクウコウ,カスタム名詞"]
+          }
+        },
+        "filter": {
+          "search_synonym": {
+            "type": "synonym_graph",
+            "synonyms": ["関東国際空港 => 関東国際空港, 関東 国際 空港"]
           }
         },
         "analyzer": {
-          "my_analyzer": {
+          "my_index_analyzer": {
             "type": "custom",
             "tokenizer": "kuromoji_user_dict"
+          },
+          "my_search_analyzer": {
+            "type": "custom",
+            "tokenizer": "kuromoji_user_dict",
+            "filter": ["search_synonym"]
           }
         }
       }
@@ -52,8 +46,8 @@ PUT books/_mapping
   "properties": {
     "title": {
       "type": "text",
-      "analyzer": "my_analyzer",
-      "search_analyzer": "my_analyzer"
+      "analyzer": "my_index_analyzer",
+      "search_analyzer": "my_search_analyzer"
     }
   }
 }
@@ -64,17 +58,17 @@ GET books
 ```
 PUT books/_doc/1
 {
-  "title": "関西国際空港"
+  "title": "関東国際空港"
 }
 
 PUT books/_doc/2
 {
-  "title": "関西にある国際空港"
+  "title": "関東にある国際空港"
 }
 
 PUT books/_doc/3
 {
-  "title": "関西 国際 空港"
+  "title": "関東 国際 空港"
 }
 
 PUT books/_doc/4
@@ -91,8 +85,8 @@ GET books/_search
   "query": {
     "match": {
       "title": {
-        "query": "関西国際空港",
-        "analyzer": "my_analyzer"
+        "query": "関東国際空港",
+        "auto_generate_synonyms_phrase_query": "false"
       }
     }
   }
@@ -118,9 +112,9 @@ GET books/_search
 ```
 GET books/_analyze
 {
-  "analyzer": "my_analyzer",
+  "analyzer": "my_index_analyzer",
   "field": "title", 
-  "text": "関西国際空港", 
+  "text": "関東国際空港", 
   "explain": true
 }
 ```
@@ -132,8 +126,8 @@ GET books/_validate/query?explain=true&rewrite=true
   "query": {
     "match": {
       "title": {
-        "query": "関西国際空港",
-        "analyzer": "my_analyzer"
+        "query": "関東国際空港",
+        "auto_generate_synonyms_phrase_query": "false"
       }
     }
   }
@@ -147,8 +141,7 @@ GET books/_explain/1
   "query": {
     "match": {
       "title": {
-        "query": "関西国際空港",
-        "analyzer": "my_analyzer"
+        "query": "関西国際空港"
       }
     }
   }
