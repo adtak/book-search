@@ -5,7 +5,7 @@ from src.monkey import depends, sample1, sample2
 def test_sample1_ng(monkeypatch):
     mock_text = "This is mock"
     monkeypatch.setattr(depends, "get_text", lambda: mock_text)
-    assert sample1.my_function() == mock_text
+    assert sample1.my_function() != mock_text
 
 
 # moduleをimportしている場合はモックできる
