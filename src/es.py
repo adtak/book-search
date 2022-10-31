@@ -13,7 +13,7 @@ class ESClient:
 
     def search(self, keyword, size):
         s = (
-            Search(using=self.client, index="book")
+            Search(using=self.client, index="books")
             .query("match", **{"itemCaption": keyword})
             .extra(from_=0, size=size)
         )

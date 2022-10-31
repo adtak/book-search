@@ -13,7 +13,7 @@ def main(file_name: str = "books.json"):
     for book in tqdm(books):
         book_item = book["Item"]
         try:
-            client.create(index="book", id=book_item["isbn"], body=book_item)
+            client.create(index="books", id=book_item["isbn"], body=book_item)
         except Exception:
             pass
 
