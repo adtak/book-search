@@ -1,4 +1,5 @@
 import streamlit as st
+from dotenv import load_dotenv
 
 from es import ESClient
 
@@ -23,4 +24,5 @@ def main():
 
 
 if __name__ == "__main__":
+    load_dotenv(".env")
     main()
