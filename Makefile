@@ -12,4 +12,4 @@ test:
 				poetry run pytest
 
 start:
-				poetry run streamlit run ./src/app.py
+				poetry run streamlit run ./book_search/app.py
