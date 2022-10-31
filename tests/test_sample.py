@@ -1,5 +1,4 @@
-from src.monkey import sample1, sample2
-from src.monkey import depends
+from src.monkey import depends, sample1, sample2
 
 
 # functionをimportしている場合はモックされない

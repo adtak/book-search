@@ -12,9 +12,8 @@ def main():
         http_auth=("elastic", os.environ["ELASTICSEARCH_PW"]),
     )
     _, index = "good", "books"
-    bool_must_q = (
-        Q("match", **{"reviews.detail": "good"})
-        & Q("range", **{"reviews.date": {"gte": "2021-01-15"}})
+    bool_must_q = Q("match", **{"reviews.detail": "good"}) & Q(
+        "range", **{"reviews.date": {"gte": "2021-01-15"}}
     )
     s = (
         Search(using=client, index=index)
