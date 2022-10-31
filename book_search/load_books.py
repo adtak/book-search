@@ -1,9 +1,8 @@
 import json
 
 import fire
-from tqdm import tqdm
-
 from es import ESClient
+from tqdm import tqdm
 
 
 def main(file_name: str = "books.json"):
