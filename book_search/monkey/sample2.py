@@ -1,4 +1,4 @@
-from src.monkey import depends
+from book_search.monkey import depends
 
 
 def my_function():

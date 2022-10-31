@@ -1,4 +1,4 @@
-from src.monkey import depends, sample1, sample2
+from book_search.monkey import depends, sample1, sample2
 
 
 # functionをimportしている場合はモックされない
