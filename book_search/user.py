@@ -12,6 +12,7 @@ class User:
         )
 
     def add_user(self, username, password):
+        self.create_user()
         self.cursor.execute(
             "INSERT INTO userstable(username,password) VALUES (?,?)",
             (username, password),
@@ -19,6 +20,7 @@ class User:
         self.conn.commit()
 
     def login_user(self, username, password):
+        self.create_user()
         self.cursor.execute(
             "SELECT * FROM userstable WHERE username =? AND password = ?",
             (username, password),
